@@ -1,0 +1,32 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "libtonc_asm",
+    srcs = glob(
+        ["**/*.s"],
+        exclude = ["src/tte/tte_types.s"],
+    ),
+    hdrs = [
+        "include/tonc_asminc.h",
+        "src/tte/tte_types.s",
+    ],
+    copts = [
+        "-x",
+        "assembler-with-cpp",
+        "-Iexternal/libtonc/include",
+        # "-Iexternal/libtonc/tte",
+    ],
+)
+
+cc_library(
+    name = "libtonc",
+    srcs = glob(["src/**/*.c"]),
+    hdrs = glob(["include/*.h"]),
+    includes = ["include"],
+    target_compatible_with = [
+        "@//platform:os",
+        "@//platform:arm7tdmi",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [":libtonc_asm"],
+)

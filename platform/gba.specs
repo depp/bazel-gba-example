@@ -1,0 +1,7 @@
+%rename link old_link
+
+*link:
+%(old_link) -T external/devkitarm_crtls/gba_cart.ld
+
+*startfile:
+external/devkitarm_crtls/thumb/gba_crt0%O crti%O%s crtbegin%O%s

@@ -1,0 +1,15 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("//platform:defs.bzl", "gba_rom")
+
+cc_binary(
+    name = "game.elf",
+    srcs = ["main.c"],
+    deps = [
+        "@libgba", # Replace with @libtonc if you like.
+    ],
+)
+
+gba_rom(
+    name = "game",
+    program = ":game.elf",
+)

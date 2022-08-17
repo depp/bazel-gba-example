@@ -1,0 +1,22 @@
+{
+	"configurations": [
+		{
+			"name": "gba",
+			"intelliSenseMode": "linux-clang-arm",
+			"includePath": [
+				"${workspaceFolder}",
+				"${workspaceFolder}/bazel-bin",
+				"${workspaceFolder}/bazel-bazel-gba-example/external/libgba/include",
+				"${workspaceFolder}/bazel-bazel-gba-example/external/devkitarm/lib/gcc/arm-none-eabi/12.1.0/include",
+				"${workspaceFolder}/bazel-bazel-gba-example/external/devkitarm/lib/gcc/arm-none-eabi/12.1.0/include-fixed",
+				"${workspaceFolder}/bazel-bazel-gba-example/external/devkitarm/arm-none-eabi/include"
+			],
+			"cStandard": "c11",
+			"cppStandard": "c++17",
+			"browse": {
+				"path": ["${workspaceFolder}"]
+			}
+		}
+	],
+	"version": 4
+}

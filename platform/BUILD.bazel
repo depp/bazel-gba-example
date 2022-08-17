@@ -1,0 +1,32 @@
+# The Nintendo GBA "OS" as a target OS.
+constraint_value(
+    name = "os",
+    constraint_setting = "@platforms//os",
+    visibility = ["//visibility:public"],
+)
+
+constraint_value(
+    name = "arm7tdmi",
+    constraint_setting = "@platforms//cpu",
+    visibility = ["//visibility:public"],
+)
+
+toolchain(
+    name = "toolchain",
+    target_compatible_with = [
+        ":os",
+        ":arm7tdmi",
+    ],
+    toolchain = "@devkitarm//:cc-compiler-gba",
+    toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
+)
+
+platform(
+    name = "gba",
+    constraint_values = [
+        ":os",
+        ":arm7tdmi",
+    ],
+)
+
+exports_files(["gba.specs"])

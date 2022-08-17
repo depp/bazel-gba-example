@@ -1,0 +1,188 @@
+load("@rules_cc//cc:defs.bzl", "cc_toolchain")
+load("@//platform:cc_toolchain_config.bzl", "cc_toolchain_config")
+load("@bazel_skylib//lib:dicts.bzl", "dicts")
+
+package(default_visibility = ["//visibility:public"])
+
+SYSTEM = "arm-none-eabi"
+VERSION = "12.1.0"
+
+filegroup(
+    name = "ar",
+    srcs = ["bin/{}-ar".format(SYSTEM)],
+)
+
+filegroup(
+    name = "as",
+    srcs = ["bin/{}-as".format(SYSTEM)],
+)
+
+filegroup(
+    name = "gcc",
+    srcs = ["bin/{}-gcc".format(SYSTEM)],
+)
+
+filegroup(
+    name = "ld",
+    srcs = ["bin/{}-ld".format(SYSTEM)],
+)
+
+filegroup(
+    name = "nm",
+    srcs = ["bin/{}-nm".format(SYSTEM)],
+)
+
+filegroup(
+    name = "objcopy",
+    srcs = ["bin/{}-objcopy".format(SYSTEM)],
+)
+
+filegroup(
+    name = "objdump",
+    srcs = ["bin/{}-objdump".format(SYSTEM)],
+)
+
+filegroup(
+    name = "strip",
+    srcs = ["bin/{}-strip".format(SYSTEM)],
+)
+
+filegroup(
+    name = "size",
+    srcs = ["bin/{}-size".format(SYSTEM)],
+)
+
+filegroup(
+    name = "assembler_files",
+    srcs = [
+        ":gcc",
+        # Needed to preprocess assembly files.
+        "libexec/gcc/{}/{}/cc1".format(SYSTEM, VERSION),
+        "{}/bin/as".format(SYSTEM),
+        # This is a hack: we need the parent directory of this file to exist,
+        # because GCC constructs a convoluted path to 'as' which goes into that
+        # directory, and then '..' back out of it.
+        "lib/gcc/{}/{}/crtbegin.o".format(SYSTEM, VERSION),
+    ],
+)
+
+filegroup(
+    name = "compiler_files",
+    srcs = [":gcc"] + glob([
+        "libexec/gcc/{}/{}/cc1".format(SYSTEM, VERSION),
+        "libexec/gcc/{}/{}/cc1obj".format(SYSTEM, VERSION),
+        "libexec/gcc/{}/{}/cc1plus".format(SYSTEM, VERSION),
+        "{}/**".format(SYSTEM),
+        "lib/gcc/{}/**".format(SYSTEM),
+    ]),
+)
+
+filegroup(
+    name = "linker_files",
+    srcs = [
+        ":gcc",
+        ":ld",
+        "@//platform:gba.specs",
+        "@devkitarm_crtls//:gba_cart.ld",
+        "@devkitarm_crtls//:thumb/gba_crt0.o",
+    ],
+)
+
+filegroup(
+    name = "all_files",
+    srcs = [
+        ":ar",
+        ":as",
+        ":ld",
+        ":nm",
+        ":objcopy",
+        ":objdump",
+        ":size",
+        ":strip",
+    ],
+)
+
+cc_toolchain_config(
+    name = "config-gba",
+    cpu = "arm",
+    compiler = "compiler",
+    toolchain_identifier = "gba",
+    host_system_name = "local",
+    target_system_name = SYSTEM,
+    target_libc = "local",
+    abi_version = "local",
+    abi_libc_version = "local",
+    cxx_builtin_include_directories = [
+        "lib/gcc/{}/{}/include".format(SYSTEM, VERSION),
+        "lib/gcc/{}/{}/include-fixed".format(SYSTEM, VERSION),
+        "{}/include".format(SYSTEM),
+    ],
+    # TODO: We can replace dicts.add with | in Bazel 6, maybe?
+    tool_paths = dicts.add({"llvm-cov": "None"}, {
+        name: "bin/{}-{}".format(SYSTEM, name)
+        for name in ["ar", "ld", "cpp", "gcc", "gcov", "nm", "objcopy", "objdump", "strip"]
+    }),
+
+    # Compile flags.
+    compile_flags = [
+        # "-U_FORTIFY_SOURCE",
+        # "-fstack-protector",
+        "-mcpu=arm7tdmi",
+        "-mtune=arm7tdmi",
+        "-mthumb",
+        "-mthumb-interwork",
+    ],
+    dbg_compile_flags = ["-g"],
+    opt_compile_flags = [
+        "-g0",
+        "-O2",
+        # "-D_FORTIFY_SOURCE=1",
+        "-DNDEBUG",
+        "-ffunction-sections",
+        "-fdata-sections",
+    ],
+    cxx_flags = ["-std=c++17"],
+
+    # Link flags.
+    link_flags = [
+        "-specs=platform/gba.specs",
+        "-Wl,-no-as-needed",
+        "-pass-exit-codes",
+    ],
+    link_libs = [
+        # "-lm",
+        # "-lc",
+        # "-lgcc",
+    ],
+    opt_link_flags = ["-Wl,--gc-sections"],
+
+    # More compile flags.
+    unfiltered_compile_flags = [
+        "-no-canonical-prefixes",
+        "-Wno-builtin-macro-redefined",
+        "-D__DATE__=\"redacted\"",
+        "-D__TIMESTAMP__=\"redacted\"",
+        "-D__TIME__=\"redacted\"",
+    ],
+)
+
+filegroup(
+    name = "empty",
+    srcs = [],
+)
+
+cc_toolchain(
+    name = "cc-compiler-gba",
+    all_files = ":all_files",
+    ar_files = ":ar",
+    as_files = ":assembler_files",
+    compiler_files = ":compiler_files",
+    dwp_files = ":empty",
+    linker_files = ":linker_files",
+    module_map = None,
+    objcopy_files = ":objcopy",
+    strip_files = ":strip",
+    supports_param_files = 1,
+    toolchain_config = ":config-gba",
+    toolchain_identifier = "gba",
+)
