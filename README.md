@@ -6,7 +6,13 @@ This is an example project for building a Game Boy Advance game with Bazel.
 
 This downloads dependencies directly from the devKitPro package repository. Those packages will eventually be replaced with newer versions, and this repository will fail to build. At that point, you'll have to update this repo to a newer version of the packages.
 
-Bazel will cache the downloads locally and share them across different projects. However, please be kind. Do not build this project inside a CI environment without using your own cache.
+Bazel will cache the downloads locally and share them across different projects. However, please be kind. Do not build this project inside a CI environment without using your own cache. Here are some ways you can avoid relying on the devKitPro package servers:
+
+- You can cache by routing Bazel through a caching proxy. See [Bazel: Using Proxies][bazel-proxy]).
+
+- If you have have a mirror of devKitPro, you can modify `_BASE_URLS` in [platform/repo.bzl](platform/repo.bzl) to point at the mirror.
+
+[bazel-proxy]: https://bazel.build/docs/external#using-proxies
 
 ## Building
 
@@ -32,7 +38,7 @@ The file `platform/cc_toolchain_config.bzl` is licensed under the terms of the A
 
 ### LibGBA
 
-LibGBA is open-source, licensed under the terms of the LGPL, with exceptions. 
+LibGBA is open-source, licensed under the terms of the LGPL, with exceptions.
 
 See: https://github.com/devkitPro/libgba/blob/master/libgba_license.txt
 
@@ -44,4 +50,4 @@ See: https://web.archive.org/web/20200918104259/https://www.coranac.com/projects
 
 > cearn on 2018-06-24 at 9:56 said:
 
-> Damian, tonclib is MIT licenced. Or would have been if I hadn't forgotten to add the license file >_>
+> Damian, tonclib is MIT licenced. Or would have been if I hadn't forgotten to add the license file >\_>
