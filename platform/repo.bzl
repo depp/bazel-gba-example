@@ -13,11 +13,11 @@ def _archive(url, sha256):
 
 _TOOLCHAINS = {
     "linux.amd64": _archive(
-        "dkp-linux-amd64/devkitARM-r58-2-x86_64.pkg.tar.xz",
+        "linux/x86_64/devkitARM-r58-2-x86_64.pkg.tar.xz",
         "247f81d86f223d6a1c8e4288eda823cca0d3c5ed3327b1ff42473b01e482d631",
     ),
     "darwin.amd64": _archive(
-        "dkp-osx-amd64/devkitARM-r58-2-x86_64.pkg.tar.xz",
+        "osx/x86_64/devkitARM-r58-2-x86_64.pkg.tar.xz"
         "65564898ea485c92db52cc1beea90fc8ccada0e9a29873913684bcfb15d4b26b",
     ),
 }

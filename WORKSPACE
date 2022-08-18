@@ -31,7 +31,7 @@ http_archive(
     build_file = "@//platform:devkitarm_crtls.bazel",
     sha256 = "cdc159e16a931c173202b9a774c80af6a2c4d32c03dc3e7821eb183c7082b389",
     strip_prefix = "opt/devkitpro/devkitARM/arm-none-eabi/lib",
-    urls = devkitarm_urls("dkp-libs/devkitarm-crtls-1.1.1-1-any.pkg.tar.xz"),
+    urls = devkitarm_urls("devkitarm-crtls-1.1.1-1-any.pkg.tar.xz"),
 )
 
 new_git_repository(
@@ -47,7 +47,7 @@ http_archive(
     build_file = "@//platform:libgba.bazel",
     sha256 = "ca806fce93e4f80d55577fa7a7cd34b12fa2934aee6a855d306c311c9cc2c876",
     strip_prefix = "opt/devkitpro/libgba",
-    urls = devkitarm_urls("dkp-libs/libgba-0.5.2-2-any.pkg.tar.xz"),
+    urls = devkitarm_urls("libgba-0.5.2-2-any.pkg.tar.xz"),
 )
 
 register_toolchains(
